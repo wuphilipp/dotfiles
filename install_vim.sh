@@ -19,6 +19,6 @@ if [[ ! -f "~/.config/nvim/init.vim" ]]
 then
     mkdir ~/.config/nvim
     touch ~/.config/nvim/init.vim
-    bash -c 'echo "set runtimepath^=~/nvim_configuration" >> ~/.config/nvim/init.vim'
+    bash -c 'echo "set runtimepath^=~/dotfiles" >> ~/.config/nvim/init.vim'
     bash -c 'echo "source ~/dotfiles/init.lua" >> ~/.config/nvim/init.vim'
 fi

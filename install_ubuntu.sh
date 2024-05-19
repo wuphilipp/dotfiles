@@ -7,4 +7,5 @@ sudo -E apt-get update
 sudo -E apt-get install -y \
     software-properties-common git curl tmux net-tools \
     silversearcher-ag ripgrep \
+    openssh-server
     # nvidia-driver-535 \

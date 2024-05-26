@@ -119,31 +119,31 @@ M.config = function()
     -- },
   })
 
-  -- -- only use pyright for auto completion, use pylsp for linting
-  -- require'lspconfig'.pylsp.setup{
-  --   settings = {
-  --     pylsp = {
-  --       -- configurationSources = {"flake8", "mypy"},
-  --       configurationSources = {"mypy"},
-  --       -- configurationSources = {},
-  --       plugins = {
-  --         flake8 = {
-  --           enabled = true,
-  --           ignore = {"D100", "D101", "D102", "D103", "D104", "D105","D107", "E203", "E501", "W503", "F401", "F841"},
-  --           maxLineLength = 120
-  --         },
-  --         mypy = {enabled=true},
-  --         pylint = {enabled=false},
-  --         pydocstyle = {enabled=false},
-  --         pycodestyle = {enabled=false},
-  --         pyflakes = {enabled=false},
-  --         jedi_completion = {enabled=false},
-  --       },
-  --     },
-  --     -- disable pylsp for now
-  --   },
-  --   on_attach=on_attach
-  -- }
+  -- only use pyright for auto completion, use pylsp for linting
+  require'lspconfig'.pylsp.setup{
+    settings = {
+      pylsp = {
+        -- configurationSources = {"flake8", "mypy"},
+        -- configurationSources = {"mypy"},
+        -- configurationSources = {},
+        plugins = {
+          flake8 = {
+            enabled = true,
+            ignore = {"D100", "D101", "D102", "D103", "D104", "D105","D107", "E203", "E501", "W503", "F401", "F841"},
+            maxLineLength = 120
+          },
+          mypy = {enabled=true},
+          pylint = {enabled=false},
+          pydocstyle = {enabled=false},
+          pycodestyle = {enabled=false},
+          pyflakes = {enabled=false},
+          jedi_completion = {enabled=true},
+        },
+      },
+      -- disable pylsp for now
+    },
+    on_attach=on_attach
+  }
 
 
   -- require("lspconfig").pyright.setup{

@@ -51,7 +51,7 @@ return {
     end
   },
   { "bronson/vim-visual-star-search", cond=function() return not vim.g.vscode end  },
-  -- { "github/copilot.vim" , cond=function() return not vim.g.vscode end },
+  { "github/copilot.vim" , cond=function() return not vim.g.vscode end },
   { "vim-scripts/xoria256.vim" },
   -- { "easymotion/vim-easymotion" },
   { "norcalli/nvim-colorizer.lua", cond=function() return not vim.g.vscode end },

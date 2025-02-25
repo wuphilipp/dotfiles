@@ -1,7 +1,7 @@
 #!/bin/bash
 
-sh ~/dotfiles/install_ubuntu.sh
-sh ~/dotfiles/cp_bash.sh
+bash ~/dotfiles/install_ubuntu.sh
+bash ~/dotfiles/cp_bash.sh
 
 TMUX_PATH=~/.tmux.conf
 if test -f "$TMUX_PATH"; then
@@ -10,5 +10,5 @@ if test -f "$TMUX_PATH"; then
 fi
 cp ~/dotfiles/.tmux.conf  ~/.tmux.conf
 
-sh ~/dotfiles/install_vim.sh
-sh ~/dotfiles/install_miniconda.sh
+bash ~/dotfiles/install_vim.sh
+# sh ~/dotfiles/install_miniconda.sh

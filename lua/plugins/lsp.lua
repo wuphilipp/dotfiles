@@ -56,18 +56,23 @@ M.config = function()
     mapping = {
       ['<CR>'] = cmp.mapping.confirm({ select = false }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
       -- ["<Tab>"] = cmp.mapping.select_next_item({behavior=cmp.SelectBehavior.Insert}),
-      ['<Tab>'] = cmp.mapping(
-        function(fallback)
-          local copilot_keys = vim.fn['copilot#Accept']()
-          if cmp.visible() then
-            cmp.select_next_item({behavoir=cmp.SelectBehavior.Insert})
-          elseif copilot_keys ~= '' and type(copilot_keys) == 'string' then
-            vim.api.nvim_feedkeys(copilot_keys, 'i', true)
-          else
-            fallback()
-          end
-        end, {'i', 's',}
-      ),
+      ['<Tab>'] = cmp.mapping(function(fallback)
+        -- Try Copilot first
+        local copilot_keys = ''
+        local ok, result = pcall(vim.fn['copilot#Accept'])
+        if ok and type(result) == 'string' and result ~= '' then
+          copilot_keys = result
+        end
+
+        if cmp.visible() then
+          cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
+        elseif copilot_keys ~= '' then
+          vim.api.nvim_feedkeys(copilot_keys, 'i', true)
+        else
+          -- Avoid infinite fallback loop
+          vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Tab>', true, true, true), 'n', true)
+        end
+      end, { 'i', 's' }),
       ['<C-e>'] = cmp.mapping.abort(),
       ["<S-Tab>"] = cmp.mapping.select_prev_item({behavior=cmp.SelectBehavior.Insert}),
     },

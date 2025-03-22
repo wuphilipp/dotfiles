@@ -49,7 +49,6 @@ vim.keymap.set({ "n", "v"}, "<C-d>", "20j", opts)
 --vim.keymap.set({ "n" }, "<Leader>rtwe", ":cdo s/\<<C-r><C-w>\>//g \| update <left><left><left><left><left><left><left><left><left><left><left><left>", opts)
 --vim.keymap.set({ "v" }, "<Leader>rtwe", "y:cdo s/\\V\\C<C-R>=escape(@\", '/\\')<CR>//g \\| update <left><left><left><left><left><left><left><left><left><left><left><left>", opts)
 
-
 vim.keymap.set({ "n" }, "<Leader>tt", ":tabnew<CR>", opts)
 vim.keymap.set({ "n" }, "<Leader>n" , ":tabn<CR>",  opts)
 vim.keymap.set({ "n" }, "<Leader>tn", "<C-w>T",      opts)
@@ -297,3 +296,4 @@ nnoremap <Leader>ai :AIChat<CR>
 nnoremap <Leader><Leader>ai :below new /tmp/last_conversation.aichat
 vnoremap <Leader>ai :AIEdit
 ]])
+

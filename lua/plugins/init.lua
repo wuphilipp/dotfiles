@@ -52,6 +52,39 @@ return {
   },
   { "bronson/vim-visual-star-search", cond=function() return not vim.g.vscode end  },
   { "github/copilot.vim" , cond=function() return not vim.g.vscode end },
+  { "yetone/avante.nvim",
+    event = "VeryLazy",
+    lazy = false,
+    version = false, -- set this if you want to always pull the latest change
+    opts = {
+      -- add any opts here
+      -- for example
+    },
+    opts = {
+      provider = "openai",
+      openai = {
+        endpoint = "https://api.openai.com/v1",
+        model = "gpt-4o", -- your desired model (or use gpt-4o, etc.)
+        timeout = 30000, -- Timeout in milliseconds, increase this for reasoning models
+        temperature = 0,
+        max_completion_tokens = 8192, -- Increase this to include reasoning tokens (for reasoning models)
+        --reasoning_effort = "medium", -- low|medium|high, only used for reasoning models
+      },
+      windows = {
+        sidebar_header = {
+          align = "left", -- left, center, right for title
+          rounded = false,
+        },
+      },
+    },
+    build = "make",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "stevearc/dressing.nvim",
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+    },
+  },
   { "vim-scripts/xoria256.vim" },
   -- { "easymotion/vim-easymotion" },
   { "norcalli/nvim-colorizer.lua", cond=function() return not vim.g.vscode end },
@@ -71,61 +104,30 @@ return {
       ]])
     end
   },
-  { "numToStr/Comment.nvim",
-    config = true,
-    opts = {
-      opleader = {
-        line = "<Leader>ci",
-      },
-      toggler = {
-        line = "<Leader>ci",
-      },
-    }
-  },
-  { "nvim-neo-tree/neo-tree.nvim",
-    keys = {
-      { "<Leader>o", ":Neotree toggle reveal left<CR>", desc = "Toggle Neo-tree", mode = "n" },
-    },
-    branch = "v3.x",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "MunifTanjim/nui.nvim",
-    },
-    opts = {
-      default_component_configs = {
-        icon = {
-          folder_closed = "+",
-          folder_open = "-",
-          folder_empty = "%",
-          default = "",
-        },
-        git_status = {
-          symbols = {
-            deleted = "x",
-            renamed = "r",
-            modified = "m",
-            untracked = "u",
-            ignored = "i",
-            unstaged = "u",
-            staged = "s",
-            conflict = "c",
-          },
-        },
-        name = {
-          use_git_status_colors = true,
-        },
-      },
-      filesystem = {
-        bind_to_cwd = false,
-        hijack_netrw_behavior = "open_current",
-        filtered_items = {
-          visible = false,
-          hide_dotfiles = false,
-          hide_gitignored = false,
-          hide_hidden = false,
-        },
-      },
-    },
+  { "scrooloose/nerdcommenter", 
+    config = function()
+	  vim.g.NERDSpaceDelims = 1
+	  vim.g.NERDCompactSexyComs = 1
+	  vim.g.NERDCommentEmptyLines = 1
+	  vim.g.NERDTrimTrailingWhitespace = 1
+	  vim.g.NERDDefaultAlign = 'left'
+	  vim.g.NERDAltDelims_python = 1
+	  vim.g.NERDAltDelims_cython = 1
+	  vim.g.NERDAltDelims_pyrex = 1
+	end  },
+  { "scrooloose/nerdtree",
+    config = function()
+	  vim.g.NERDTreeShowHidden = 1
+	  vim.g.NERDTreeShowLineNumbers = 1
+	  vim.g.NERDTreeMinimalUI = 1
+	  vim.g.NERDTreeFileExtensionHighlightFullName = 1
+	  vim.g.NERDTreeExactMatchHighlightFullName = 1
+	  vim.g.NERDTreePatternMatchHighlightFullName = 1
+	  vim.g.NERDTreeMapJumpNextSibling = '<Nop>'
+	  vim.g.NERDTreeMapJumpPrevSibling = '<Nop>'
+	  vim.api.nvim_set_keymap('n', '<Leader>o', ':NERDTree %<CR>', { noremap = true, silent = true })
+	  vim.api.nvim_set_keymap('n', '<Leader>ot', ':NERDTreeToggle %<CR>', { noremap = true, silent = true })
+	end
   },
   { "airblade/vim-rooter",
     config = function()

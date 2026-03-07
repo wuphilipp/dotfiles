@@ -53,6 +53,7 @@ vim.cmd("highlight PythonFunctionCall ctermfg=183  guifg=#d7afff")
 vim.cmd("highlight PythonFunction ctermfg=183  guifg=#d7afff")
 
 
+
 vim.cmd("highlight SpellBad cterm=bold,italic ctermfg=red gui=bold,italic guifg=red")
 
 -- gray

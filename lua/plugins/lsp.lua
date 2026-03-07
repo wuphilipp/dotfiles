@@ -8,7 +8,6 @@ local M = {
         "hrsh7th/cmp-path",
         "hrsh7th/cmp-cmdline",
         "hrsh7th/cmp-vsnip",
-        "hrsh7th/cmp-path",
         "folke/lsp-colors.nvim",
     },
     cond = function()
@@ -17,31 +16,27 @@ local M = {
 }
 
 M.config = function()
-  local nvim_lsp = require('lspconfig')
-  -- Use an on_attach function to only map the following keys
-  -- after the language server attaches to the current buffer
-  local on_attach = function(client, bufnr)
-  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+  -- LSP keymaps (applied via LspAttach autocmd)
+  vim.api.nvim_create_autocmd('LspAttach', {
+    group = vim.api.nvim_create_augroup('UserLspConfig', {}),
+    callback = function(ev)
+      local opts = { buffer = ev.buf, noremap = true, silent = true }
+      vim.keymap.set('n', '<leader>d', vim.lsp.buf.definition, opts)
+      vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+      vim.keymap.set('n', '<leader>i', vim.lsp.buf.implementation, opts)
+      vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, opts)
+      vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename, opts)
+      vim.keymap.set('n', '<leader>u', vim.lsp.buf.references, opts)
+      vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
+      vim.keymap.set('n', '[g', function() vim.diagnostic.goto_prev({ float = { border = "single" }}) end, opts)
+      vim.keymap.set('n', ']g', function() vim.diagnostic.goto_next({ float = { border = "single" }}) end, opts)
+      vim.keymap.set('n', '<leader><tab>', vim.diagnostic.setloclist, opts)
+      vim.keymap.set('n', '<leader><leader><tab>', vim.diagnostic.setqflist, opts)
 
-  -- Enable completion triggered by <c-x><c-o>
-  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
-
-  -- Mappings.
-  local opts = { noremap=true, silent=true }
-    -- See `:help vim.lsp.*` for documentation on any of the below functions
-    buf_set_keymap('n', '<leader>d', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-    buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-    buf_set_keymap('n', '<leader>i', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-    buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-    buf_set_keymap('n', '<leader>r', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-    buf_set_keymap('n', '<leader>u', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-    buf_set_keymap('n', '<leader>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-    buf_set_keymap('n', '[g', '<cmd>lua vim.diagnostic.goto_prev({ popup_opts = { border = "single" }})<CR>', opts)
-    buf_set_keymap('n', ']g', '<cmd>lua vim.diagnostic.goto_next({ popup_opts = { border = "single" }})<CR>', opts)
-    buf_set_keymap('n', '<leader><tab>', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
-    buf_set_keymap('n', '<leader><leader><tab>', '<cmd>lua vim.diagnostic.setqflist()<CR>', opts)
-  end
+      -- Enable completion triggered by <c-x><c-o>
+      vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
+    end,
+  })
 
   -- Setup nvim-cmp.
   local cmp = require'cmp'
@@ -55,7 +50,6 @@ M.config = function()
     },
     mapping = {
       ['<CR>'] = cmp.mapping.confirm({ select = false }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-      -- ["<Tab>"] = cmp.mapping.select_next_item({behavior=cmp.SelectBehavior.Insert}),
       ['<Tab>'] = cmp.mapping(function(fallback)
         -- Try Copilot first
         local copilot_keys = ''
@@ -83,94 +77,61 @@ M.config = function()
       { name = 'buffer' },
     })
   })
-  vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
-      -- Disable underline, it's very annoying
-      underline = false,
-      -- Enable virtual text, override spacing to 4
-      virtual_text = {spacing = 4},
-      signs = true,
-      update_in_insert = false
+
+  -- Diagnostic config (nvim 0.11+ style)
+  vim.diagnostic.config({
+    underline = false,
+    virtual_text = { spacing = 4 },
+    signs = true,
+    update_in_insert = false,
+    float = { border = "single" },
   })
 
-  vim.lsp.handlers["textDocument/hover"] =
-    vim.lsp.with(
+  -- Hover handler border
+  vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
     vim.lsp.handlers.hover,
-    {
-      border = "single"
-    }
+    { border = "single" }
   )
 
-  -- vim.lsp.handlers["textDocument/signatureHelp"] =
-  --   vim.lsp.with(
-  --   vim.lsp.handlers.signature_help,
-  --   {
-  --     border = "single"
-  --   }
-  -- )
-
+  -- Diagnostic signs
   local signs = { Error = "▴", Warn = "▴", Hint = "▴", Info = "▴" }
   for type, icon in pairs(signs) do
     local hl = "DiagnosticSign" .. type
-    vim.fn.sign_define(hl, { text = icon, texthl = hl})
+    vim.fn.sign_define(hl, { text = icon, texthl = hl })
   end
 
-  -- Setup lspconfig.
-  local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
+  -- LSP capabilities for nvim-cmp
+  local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
-  require'lspconfig'.pyright.setup({
-    on_attach=on_attach,
-    -- handlers = {
-    --   ["textDocument/publishDiagnostics"] = function() end,
-    -- },
+  -- Configure LSP servers using vim.lsp.config (nvim 0.11+)
+  vim.lsp.config('pyright', {
+    capabilities = capabilities,
   })
 
-  -- only use pyright for auto completion, use pylsp for linting
-  require'lspconfig'.pylsp.setup{
+  vim.lsp.config('pylsp', {
+    capabilities = capabilities,
     settings = {
       pylsp = {
-        -- configurationSources = {"flake8", "mypy"},
-        -- configurationSources = {"mypy"},
-        -- configurationSources = {},
         plugins = {
           flake8 = {
             enabled = true,
             ignore = {"D100", "D101", "D102", "D103", "D104", "D105","D107", "E203", "E501", "W503", "F401", "F841"},
             maxLineLength = 120
           },
-          mypy = {enabled=true},
-          pylint = {enabled=false},
-          pydocstyle = {enabled=false},
-          pycodestyle = {enabled=false},
-          pyflakes = {enabled=false},
-          jedi_completion = {enabled=true},
+          mypy = { enabled = true },
+          pylint = { enabled = false },
+          pydocstyle = { enabled = false },
+          pycodestyle = { enabled = false },
+          pyflakes = { enabled = false },
+          jedi_completion = { enabled = true },
         },
       },
-      -- disable pylsp for now
     },
-    on_attach=on_attach
-  }
+  })
 
-
-  -- require("lspconfig").pyright.setup{
-  --     settings = {
-  --       python = {
-  --         analysis = {
-  --           autoSearchPaths = true,
-  --           diagnosticMode = "workspace",
-  --           reportPrivateImportUsage = false,
-  --         },
-  --       },
-  --     },
-  --     -- single_file_support = true
-  -- }
-
-  -- require "lsp_signature".setup({
-  --   bind = true, -- This is mandatory, otherwise border config won't get registered.
-  --   handler_opts = {
-  --     border = "single"
-  --   },
-  --   hint_enable = false,
-  -- })
+  -- Enable the configured servers
+  vim.lsp.enable('pyright')
+  vim.lsp.enable('pylsp')
 
   -- copilot settings
   vim.g.copilot_no_tab_map = true

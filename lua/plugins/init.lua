@@ -1,9 +1,82 @@
 return {
-  { "norcalli/nvim-colorizer.lua",
+  -- Treesitter: Better syntax highlighting, text objects, and more
+  { "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
+    cond = function() return not vim.g.vscode end,
     config = function()
-        require("colorizer").setup()
-    end
+      require("nvim-treesitter.configs").setup({
+        ensure_installed = {
+          "python", "lua", "vim", "vimdoc", "bash", "json", "yaml", "toml",
+          "markdown", "markdown_inline", "html", "css", "javascript", "typescript",
+          "c", "cpp", "rust", "go", "dockerfile", "gitcommit", "diff",
+        },
+        auto_install = true,
+        highlight = {
+          enable = true,
+          -- Disable for large files
+          disable = function(lang, buf)
+            local max_filesize = 100 * 1024 -- 100 KB
+            local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
+            if ok and stats and stats.size > max_filesize then
+              return true
+            end
+          end,
+          additional_vim_regex_highlighting = false,
+        },
+        indent = { enable = true },
+        incremental_selection = {
+          enable = true,
+          keymaps = {
+            init_selection = "<CR>",
+            node_incremental = "<CR>",
+            scope_incremental = "<S-CR>",
+            node_decremental = "<BS>",
+          },
+        },
+        textobjects = {
+          select = {
+            enable = true,
+            lookahead = true,
+            keymaps = {
+              ["af"] = "@function.outer",
+              ["if"] = "@function.inner",
+              ["ac"] = "@class.outer",
+              ["ic"] = "@class.inner",
+              ["aa"] = "@parameter.outer",
+              ["ia"] = "@parameter.inner",
+            },
+          },
+          move = {
+            enable = true,
+            set_jumps = true,
+            goto_next_start = {
+              ["]m"] = "@function.outer",
+              ["]]"] = "@class.outer",
+            },
+            goto_next_end = {
+              ["]M"] = "@function.outer",
+              ["]["] = "@class.outer",
+            },
+            goto_previous_start = {
+              ["[m"] = "@function.outer",
+              ["[["] = "@class.outer",
+            },
+            goto_previous_end = {
+              ["[M"] = "@function.outer",
+              ["[]"] = "@class.outer",
+            },
+          },
+          swap = {
+            enable = true,
+            swap_next = { ["<leader>a"] = "@parameter.inner" },
+            swap_previous = { ["<leader>A"] = "@parameter.inner" },
+          },
+        },
+      })
+    end,
+    dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
   },
+
   -- {'altermo/nwm',branch='x11'},
   -- {'madox2/vim-ai'},
   {"vim-scripts/restore_view.vim",
@@ -52,42 +125,13 @@ return {
   },
   { "bronson/vim-visual-star-search", cond=function() return not vim.g.vscode end  },
   { "github/copilot.vim" , cond=function() return not vim.g.vscode end },
-  { "yetone/avante.nvim",
-    event = "VeryLazy",
-    lazy = false,
-    version = false, -- set this if you want to always pull the latest change
-    opts = {
-      -- add any opts here
-      -- for example
-    },
-    opts = {
-      provider = "openai",
-      openai = {
-        endpoint = "https://api.openai.com/v1",
-        model = "gpt-4o", -- your desired model (or use gpt-4o, etc.)
-        timeout = 30000, -- Timeout in milliseconds, increase this for reasoning models
-        temperature = 0,
-        max_completion_tokens = 8192, -- Increase this to include reasoning tokens (for reasoning models)
-        --reasoning_effort = "medium", -- low|medium|high, only used for reasoning models
-      },
-      windows = {
-        sidebar_header = {
-          align = "left", -- left, center, right for title
-          rounded = false,
-        },
-      },
-    },
-    build = "make",
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-      "stevearc/dressing.nvim",
-      "nvim-lua/plenary.nvim",
-      "MunifTanjim/nui.nvim",
-    },
-  },
+
   { "vim-scripts/xoria256.vim" },
   -- { "easymotion/vim-easymotion" },
-  { "norcalli/nvim-colorizer.lua", cond=function() return not vim.g.vscode end },
+  { "norcalli/nvim-colorizer.lua",
+    cond = function() return not vim.g.vscode end,
+    config = function() require("colorizer").setup() end,
+  },
   { "windwp/nvim-autopairs", config = true }, -- See `config` under https://github.com/folke/lazy.nvim#-plugin-spec
   { "numToStr/Comment.nvim", config = true },
   { "google/vim-codefmt", dependencies = { "google/vim-maktaba", "brentyi/isort.vim" } },

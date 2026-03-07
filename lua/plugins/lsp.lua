@@ -82,7 +82,14 @@ M.config = function()
   vim.diagnostic.config({
     underline = false,
     virtual_text = { spacing = 4 },
-    signs = true,
+    signs = {
+      text = {
+        [vim.diagnostic.severity.ERROR] = "▴",
+        [vim.diagnostic.severity.WARN] = "▴",
+        [vim.diagnostic.severity.HINT] = "▴",
+        [vim.diagnostic.severity.INFO] = "▴",
+      },
+    },
     update_in_insert = false,
     float = { border = "single" },
   })
@@ -93,19 +100,24 @@ M.config = function()
     { border = "single" }
   )
 
-  -- Diagnostic signs
-  local signs = { Error = "▴", Warn = "▴", Hint = "▴", Info = "▴" }
-  for type, icon in pairs(signs) do
-    local hl = "DiagnosticSign" .. type
-    vim.fn.sign_define(hl, { text = icon, texthl = hl })
-  end
-
   -- LSP capabilities for nvim-cmp
   local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
   -- Configure LSP servers using vim.lsp.config (nvim 0.11+)
+  -- Use root_markers to find the workspace root (uv.lock for uv workspaces)
+  -- and point pythonPath at the venv so pyright resolves all workspace packages
   vim.lsp.config('pyright', {
     capabilities = capabilities,
+    root_markers = { 'uv.lock', 'pyrightconfig.json', 'pyproject.toml', '.git' },
+    before_init = function(_, config)
+      local root = config.root_dir
+      local venv_python = root and vim.fs.joinpath(root, '.venv', 'bin', 'python')
+      if venv_python and vim.uv.fs_stat(venv_python) then
+        config.settings = config.settings or {}
+        config.settings.python = config.settings.python or {}
+        config.settings.python.pythonPath = venv_python
+      end
+    end,
   })
 
   vim.lsp.config('pylsp', {

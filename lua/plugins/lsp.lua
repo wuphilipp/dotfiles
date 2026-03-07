@@ -8,7 +8,6 @@ local M = {
         "hrsh7th/cmp-path",
         "hrsh7th/cmp-cmdline",
         "hrsh7th/cmp-vsnip",
-        "hrsh7th/cmp-path",
         "folke/lsp-colors.nvim",
     },
     cond = function()

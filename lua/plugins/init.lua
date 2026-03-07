@@ -16,7 +16,7 @@ return {
           -- Disable for large files
           disable = function(lang, buf)
             local max_filesize = 100 * 1024 -- 100 KB
-            local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+            local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
             if ok and stats and stats.size > max_filesize then
               return true
             end
@@ -33,16 +33,6 @@ return {
             node_decremental = "<BS>",
           },
         },
-      })
-    end,
-  },
-
-  -- Treesitter text objects: select/move by function, class, etc.
-  { "nvim-treesitter/nvim-treesitter-textobjects",
-    dependencies = { "nvim-treesitter/nvim-treesitter" },
-    cond = function() return not vim.g.vscode end,
-    config = function()
-      require("nvim-treesitter.configs").setup({
         textobjects = {
           select = {
             enable = true,
@@ -84,13 +74,9 @@ return {
         },
       })
     end,
+    dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
   },
 
-  { "norcalli/nvim-colorizer.lua",
-    config = function()
-        require("colorizer").setup()
-    end
-  },
   -- {'altermo/nwm',branch='x11'},
   -- {'madox2/vim-ai'},
   {"vim-scripts/restore_view.vim",
@@ -142,7 +128,10 @@ return {
 
   { "vim-scripts/xoria256.vim" },
   -- { "easymotion/vim-easymotion" },
-  { "norcalli/nvim-colorizer.lua", cond=function() return not vim.g.vscode end },
+  { "norcalli/nvim-colorizer.lua",
+    cond = function() return not vim.g.vscode end,
+    config = function() require("colorizer").setup() end,
+  },
   { "windwp/nvim-autopairs", config = true }, -- See `config` under https://github.com/folke/lazy.nvim#-plugin-spec
   { "numToStr/Comment.nvim", config = true },
   { "google/vim-codefmt", dependencies = { "google/vim-maktaba", "brentyi/isort.vim" } },

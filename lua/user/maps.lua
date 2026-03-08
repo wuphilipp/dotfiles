@@ -53,15 +53,13 @@ vim.keymap.set({ "n" }, "<Leader>tt", ":tabnew<CR>", opts)
 vim.keymap.set({ "n" }, "<Leader>n" , ":tabn<CR>",  opts)
 vim.keymap.set({ "n" }, "<Leader>tn", "<C-w>T",      opts)
 
-if not vim.g.vscode then
-    vim.keymap.set({ "n" }, "<Up>"  , ":exe 'resize +5'<CR>", opts)
-    vim.keymap.set({ "n" }, "<Down>", ":exe 'resize -5'<CR>", opts)
-    vim.keymap.set({ "n" }, "<Right>", ":exe 'vert resize +5'<CR>", opts)
-    vim.keymap.set({ "n" }, "<Left>", ":exe 'vert resize -5'<CR>", opts)
+vim.keymap.set({ "n" }, "<Up>"  , ":exe 'resize +5'<CR>", opts)
+vim.keymap.set({ "n" }, "<Down>", ":exe 'resize -5'<CR>", opts)
+vim.keymap.set({ "n" }, "<Right>", ":exe 'vert resize +5'<CR>", opts)
+vim.keymap.set({ "n" }, "<Left>", ":exe 'vert resize -5'<CR>", opts)
 
-    vim.keymap.set({ "n" }, "<Leader>pp", "Oimport ipdb; ipdb.set_trace();<ESC>", opts)
-    vim.keymap.set({ "n" }, "<Leader>ps", "O@settings(print_blob=True)<ESC>", opts)
-end
+vim.keymap.set({ "n" }, "<Leader>pp", "Oimport ipdb; ipdb.set_trace();<ESC>", opts)
+vim.keymap.set({ "n" }, "<Leader>ps", "O@settings(print_blob=True)<ESC>", opts)
 
 local function adaptive_motion(next_flag)
     -- Check if diff is open
@@ -147,10 +145,8 @@ vim.keymap.set({ "n" }, "<Leader>c", '"+y', opts)
 vim.keymap.set({ "v" }, "<Leader>v", '"+p', opts)
 vim.keymap.set({ "n" }, "<Leader>v", '"+p', opts)
 
-if not vim.g.vscode then
-    vim.keymap.set({ "n" }, "<Leader>pi", ":ImportName<CR><C-o>", opts)
-    vim.keymap.set({ "n" }, "<Leader>pih", ":ImportNameHere<CR>", opts)
-end
+vim.keymap.set({ "n" }, "<Leader>pi", ":ImportName<CR><C-o>", opts)
+vim.keymap.set({ "n" }, "<Leader>pih", ":ImportNameHere<CR>", opts)
 
 vim.keymap.set({ "n" }, "<Leader>cf", ":FormatCode<CR>:redraw!<CR>", opts)
 vim.keymap.set({ "v" }, "<Leader>cf", ":FormatLines<CR>:redraw!<CR>", opts)

@@ -26,9 +26,7 @@ o.completeopt = { "menu", "menuone", "noselect", "noinsert" } -- A comma separat
 o.number = true -- show line numbers (or only the current one)
 o.relativenumber = true -- line numbers
 o.shiftwidth = 4
-if not vim.g.vscode then
-    o.scrolloff = 1000 -- minimum number of screen lines to keep above and below the cursor
-end
+o.scrolloff = 1000 -- minimum number of screen lines to keep above and below the cursor
 o.showmode = false -- don't show mode
 o.smartcase = true -- smart case
 o.smartindent = true -- make indenting smarter again

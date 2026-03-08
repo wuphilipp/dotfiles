@@ -2,7 +2,6 @@ return {
   -- Treesitter: Better syntax highlighting, text objects, and more
   { "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
-    cond = function() return not vim.g.vscode end,
     config = function()
       require("nvim-treesitter.configs").setup({
         ensure_installed = {
@@ -79,12 +78,8 @@ return {
     dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
   },
 
-  -- {'altermo/nwm',branch='x11'},
-  -- {'madox2/vim-ai'},
+
   {"vim-scripts/restore_view.vim",
-    cond = function()
-      return not vim.g.vscode
-    end,
     config = function()
       vim.g.viewoptions = "cursor,folds,slash,unix"
     end
@@ -116,29 +111,24 @@ return {
       ]]
     end
   },
-  { "wuphilipp/python-imports.vim",
-    cond=function() return not vim.g.vscode end
-  },
+  { "wuphilipp/python-imports.vim" },
   { "xiyaowong/nvim-cursorword",
-    cond=function() return not vim.g.vscode end,
     config = function()
       vim.g.cursorword_min_width = 3
     end
   },
-  { "bronson/vim-visual-star-search", cond=function() return not vim.g.vscode end  },
-  { "github/copilot.vim" , cond=function() return not vim.g.vscode end },
+  { "bronson/vim-visual-star-search" },
+  { "github/copilot.vim" },
 
   { "vim-scripts/xoria256.vim" },
   -- { "easymotion/vim-easymotion" },
   { "norcalli/nvim-colorizer.lua",
-    cond = function() return not vim.g.vscode end,
     config = function() require("colorizer").setup() end,
   },
   { "windwp/nvim-autopairs", config = true }, -- See `config` under https://github.com/folke/lazy.nvim#-plugin-spec
   { "numToStr/Comment.nvim", config = true },
   { "google/vim-codefmt", dependencies = { "google/vim-maktaba", "brentyi/isort.vim" } },
   { "brentyi/isort.vim",
-    cond = function() return not vim.g.vscode end,
     config = function()
       vim.g.isort_vim_options = "--profile black"
       vim.cmd([[
@@ -180,7 +170,6 @@ return {
     vim.g.rooter_silent_chdir = 1
     vim.g.rooter_change_directory_for_non_project_files = "current"
   end,
-    cond=function() return not vim.g.vscode end 
   },
   { "sheerun/vim-polyglot",
     config = function()
@@ -196,14 +185,8 @@ return {
     config = function()
     vim.g.tmux_navigator_disable_when_zoomed= 1
   end,
-    cond = function()
-      return not vim.g.vscode
-    end
   },
   { "wookayin/semshi",
-      cond = function()
-        return not vim.g.vscode
-      end,
       ft = "python",
       build = ":UpdateRemotePlugins",
       init = function()

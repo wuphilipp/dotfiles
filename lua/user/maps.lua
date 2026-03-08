@@ -53,15 +53,13 @@ vim.keymap.set({ "n" }, "<Leader>tt", ":tabnew<CR>", opts)
 vim.keymap.set({ "n" }, "<Leader>n" , ":tabn<CR>",  opts)
 vim.keymap.set({ "n" }, "<Leader>tn", "<C-w>T",      opts)
 
-if not vim.g.vscode then
-    vim.keymap.set({ "n" }, "<Up>"  , ":exe 'resize +5'<CR>", opts)
-    vim.keymap.set({ "n" }, "<Down>", ":exe 'resize -5'<CR>", opts)
-    vim.keymap.set({ "n" }, "<Right>", ":exe 'vert resize +5'<CR>", opts)
-    vim.keymap.set({ "n" }, "<Left>", ":exe 'vert resize -5'<CR>", opts)
+vim.keymap.set({ "n" }, "<Up>"  , ":exe 'resize +5'<CR>", opts)
+vim.keymap.set({ "n" }, "<Down>", ":exe 'resize -5'<CR>", opts)
+vim.keymap.set({ "n" }, "<Right>", ":exe 'vert resize +5'<CR>", opts)
+vim.keymap.set({ "n" }, "<Left>", ":exe 'vert resize -5'<CR>", opts)
 
-    vim.keymap.set({ "n" }, "<Leader>pp", "Oimport ipdb; ipdb.set_trace();<ESC>", opts)
-    vim.keymap.set({ "n" }, "<Leader>ps", "O@settings(print_blob=True)<ESC>", opts)
-end
+vim.keymap.set({ "n" }, "<Leader>pp", "Oimport ipdb; ipdb.set_trace();<ESC>", opts)
+vim.keymap.set({ "n" }, "<Leader>ps", "O@settings(print_blob=True)<ESC>", opts)
 
 local function adaptive_motion(next_flag)
     -- Check if diff is open
@@ -147,10 +145,25 @@ vim.keymap.set({ "n" }, "<Leader>c", '"+y', opts)
 vim.keymap.set({ "v" }, "<Leader>v", '"+p', opts)
 vim.keymap.set({ "n" }, "<Leader>v", '"+p', opts)
 
-if not vim.g.vscode then
-    vim.keymap.set({ "n" }, "<Leader>pi", ":ImportName<CR><C-o>", opts)
-    vim.keymap.set({ "n" }, "<Leader>pih", ":ImportNameHere<CR>", opts)
-end
+-- Copy @file or @file:startline-endline to clipboard for pasting into Claude
+vim.keymap.set("n", "<Leader>as", function()
+  local path = vim.fn.expand("%:.")
+  vim.fn.setreg("+", "@" .. path)
+  print("@" .. path)
+end, opts)
+vim.keymap.set("v", "<Leader>as", function()
+  local path = vim.fn.expand("%:.")
+  local start_line = vim.fn.line("v")
+  local end_line = vim.fn.line(".")
+  if start_line > end_line then start_line, end_line = end_line, start_line end
+  local ref = "@" .. path .. ":" .. start_line .. "-" .. end_line
+  vim.fn.setreg("+", ref)
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
+  print(ref)
+end, opts)
+
+vim.keymap.set({ "n" }, "<Leader>pi", ":ImportName<CR><C-o>", opts)
+vim.keymap.set({ "n" }, "<Leader>pih", ":ImportNameHere<CR>", opts)
 
 vim.keymap.set({ "n" }, "<Leader>cf", ":FormatCode<CR>:redraw!<CR>", opts)
 vim.keymap.set({ "v" }, "<Leader>cf", ":FormatLines<CR>:redraw!<CR>", opts)
@@ -240,60 +253,5 @@ vim.api.nvim_create_user_command(
 )
 
 
-vim.cmd([[
-let initial_prompt =<< trim END
->>> system
-Role: Act as a completion engine providing high-quality, concise code and text completions, generations, transformations, or explanations.
 
-Specifications:
-- Task: Generate code with type annotations and documentation, or provide clear text transformations and explanations.
-- Topic: General programming and text editing.
-- Style: Deliver results directly without elaborate commentary unless requested.
-- Audience: Users of text editors and programmers seeking text and code transformation/generation functionality.
-
-Detailed Behavior:
-1. Code Generation:
-   - Include type annotations for all functions and variables.
-   - Provide clear documentation for each function or class.
-   - Ensure code is clean, well-structured, and follows best practices.
-2. Text Completion and Transformation:
-   - Complete sentences, paragraphs, or text blocks accurately based on context.
-   - Transform text as requested, improving clarity and readability.
-   - Provide explanations for transformations when necessary.
-3. Explanations:
-   - Offer clear explanations for code snippets, algorithms, or text transformations.
-   - Break down logic step-by-step and describe key components.
-
-Interaction Guidelines:
-- Respond promptly and accurately to user inputs.
-- Focus on delivering the requested completion or transformation without unnecessary commentary.
-- Provide thorough and clear responses when additional details are requested.
-END
-
-
-
-
-
-
-
-let chat_engine_config = {
-\  "engine": "chat",
-\  "options": {
-\    "model": "gpt-4o",
-\    "max_tokens": 1000,
-\    "temperature": 0.1,
-\    "request_timeout": 20,
-\    "initial_prompt": initial_prompt,
-\    "endpoint_url": "https://api.openai.com/v1/chat/completions",
-\  },
-\ }
-
-let g:vim_ai_complete = chat_engine_config
-let g:vim_ai_edit = chat_engine_config
-
-xnoremap <Leader>ai :AIChat<CR>
-nnoremap <Leader>ai :AIChat<CR>
-nnoremap <Leader><Leader>ai :below new /tmp/last_conversation.aichat
-vnoremap <Leader>ai :AIEdit
-]])
 

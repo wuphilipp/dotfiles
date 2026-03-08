@@ -10,9 +10,6 @@ local M = {
         "hrsh7th/cmp-vsnip",
         "folke/lsp-colors.nvim",
     },
-    cond = function()
-      return not vim.g.vscode
-    end
 }
 
 M.config = function()

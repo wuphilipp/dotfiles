@@ -126,6 +126,20 @@ return {
   },
   { "bronson/vim-visual-star-search", cond=function() return not vim.g.vscode end  },
   { "github/copilot.vim" , cond=function() return not vim.g.vscode end },
+  { "greggh/claude-code.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    cond = function() return not vim.g.vscode end,
+    config = function()
+      require("claude-code").setup({
+        keymaps = {
+          toggle = {
+            normal = "<leader>ai",
+            terminal = "<leader>ai",
+          },
+        },
+      })
+    end,
+  },
 
   { "vim-scripts/xoria256.vim" },
   -- { "easymotion/vim-easymotion" },

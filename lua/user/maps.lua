@@ -145,6 +145,22 @@ vim.keymap.set({ "n" }, "<Leader>c", '"+y', opts)
 vim.keymap.set({ "v" }, "<Leader>v", '"+p', opts)
 vim.keymap.set({ "n" }, "<Leader>v", '"+p', opts)
 
+-- Copy @file or @file:startline-endline to clipboard for pasting into Claude
+vim.keymap.set("n", "<Leader>as", function()
+  local path = vim.fn.expand("%:.")
+  vim.fn.setreg("+", "@" .. path)
+  print("@" .. path)
+end, opts)
+vim.keymap.set("v", "<Leader>as", function()
+  local path = vim.fn.expand("%:.")
+  local start_line = vim.fn.line("v")
+  local end_line = vim.fn.line(".")
+  if start_line > end_line then start_line, end_line = end_line, start_line end
+  local ref = "@" .. path .. ":" .. start_line .. "-" .. end_line
+  vim.fn.setreg("+", ref)
+  print(ref)
+end, opts)
+
 vim.keymap.set({ "n" }, "<Leader>pi", ":ImportName<CR><C-o>", opts)
 vim.keymap.set({ "n" }, "<Leader>pih", ":ImportNameHere<CR>", opts)
 

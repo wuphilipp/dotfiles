@@ -79,8 +79,7 @@ return {
     dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
   },
 
-  -- {'altermo/nwm',branch='x11'},
-  -- {'madox2/vim-ai'},
+
   {"vim-scripts/restore_view.vim",
     cond = function()
       return not vim.g.vscode

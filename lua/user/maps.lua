@@ -158,6 +158,7 @@ vim.keymap.set("v", "<Leader>as", function()
   if start_line > end_line then start_line, end_line = end_line, start_line end
   local ref = "@" .. path .. ":" .. start_line .. "-" .. end_line
   vim.fn.setreg("+", ref)
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
   print(ref)
 end, opts)
 

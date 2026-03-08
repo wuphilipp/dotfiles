@@ -121,7 +121,22 @@ return {
   { "github/copilot.vim" },
   { "greggh/claude-code.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
-    config = true,
+    config = function()
+      local cc = require("claude-code")
+      cc.setup({
+        keymaps = {
+          toggle = {
+            normal = "<leader>as",
+            terminal = "<leader>as",
+          },
+        },
+      })
+      vim.keymap.set("n", "<leader>af", function()
+        cc.setup({ window = { position = "float" } })
+        vim.cmd("ClaudeCode")
+        cc.setup({ window = { position = "botright" } })
+      end, { desc = "Claude Code (float)" })
+    end,
   },
 
   { "vim-scripts/xoria256.vim" },

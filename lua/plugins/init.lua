@@ -181,6 +181,17 @@ return {
         vim.g.vim_markdown_math = 1
     end,
   },
+  { "iamcco/markdown-preview.nvim",
+    ft = { "markdown" },
+    build = ":call mkdp#util#install()",
+    config = function()
+      vim.g.mkdp_auto_close = 0
+      vim.g.mkdp_preview_options = { katex = { globalGroup = 1 } }
+    end,
+    keys = {
+      { "<Leader>mp", "<Cmd>MarkdownPreviewToggle<CR>", desc = "Toggle Markdown Preview" },
+    },
+  },
   { "christoomey/vim-tmux-navigator",
     config = function()
     vim.g.tmux_navigator_disable_when_zoomed= 1
